@@ -1,0 +1,33 @@
+body {
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.firstPageDiv {
+  display: flex;
+  gap: 18px;
+  font-size: 20px;
+  justify-content: center;
+}
+
+button {
+  border-radius: 6px;
+  border: none;
+  outline: none;
+  padding: 4px 18px;
+}
+
+.parent-repo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 30px;
+}
+
+.user-detail {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+}

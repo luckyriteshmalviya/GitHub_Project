@@ -1,0 +1,18 @@
+.single-repo {
+  background-color: rgb(236, 236, 236);
+  border-radius: 15px;
+  padding: 20px;
+  /* margin: 6px; */
+  text-decoration: none;
+  display: flex;
+  color: black;
+  gap: 15px;
+  width: 580px;
+}
+
+.repo-description {
+  margin: 0px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
