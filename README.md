@@ -25,9 +25,13 @@ Fetch Details of any user by user ID
 ### Followers Details
 
 ![WhatsApp Image 2022-10-03 at 1 59 11 PM](https://user-images.githubusercontent.com/99033374/193533536-a71c0c55-74b5-4d10-94c0-b7b700e01c32.jpeg)
-
   
-    
+  
+### Demo
+
+https://user-images.githubusercontent.com/99033374/193589431-b423d6a5-caaf-4065-9861-87701e3767a7.mp4
+
+
       
       
 ## PROJECT SITE :- https://ritesh-github-project.netlify.app/
