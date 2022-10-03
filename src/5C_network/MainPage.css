@@ -31,3 +31,10 @@ button {
   gap: 30px;
   justify-content: center;
 }
+
+.user-image {
+  background-color: lightgray;
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+}

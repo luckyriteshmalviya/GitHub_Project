@@ -5,8 +5,8 @@ function UserDetails({ data }) {
   return (
     <div className="user-detail" style={{ margin: "4rem" }}>
       <div>
-        <div>
-          <img width="130px" src={data.avatar_url} alt="user-image" />
+        <div className="user-image">
+          <img width="130px" src={data.avatar_url} />
         </div>
 
         <div style={{ marginTop: "5px" }}>

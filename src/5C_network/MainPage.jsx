@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import "./MainPage.css";
+import { getAPI } from "./network";
 import RepoList from "./RepoList/RepoList";
 import UserDetails from "./UserDetails";
 
@@ -14,33 +15,35 @@ function MainPage() {
   const name = new URLSearchParams(search).get("q");
 
   useEffect(() => {
-    if (name === null) {
-      return;
-    }
-    document.getElementById("user-content").style.display = "block";
-    fetch(`https://api.github.com/users/${name}/repos`)
-      .then((res) => res.json())
-      .then((item) => setRepos(item));
+    (async () => {
+      if (name === null) {
+        return;
+      }
+      document.getElementById("user-content").style.display = "block";
 
-    fetch(`https://api.github.com/users/${name}`)
-      .then((res) => res.json())
-      .then((item) => setData(item));
+      const userDetails = await getAPI(`https://api.github.com/users/${name}`);
+      const userRepos = await getAPI(
+        `https://api.github.com/users/${name}/repos`
+      );
+      console.log({ name }, { userDetails }, { userRepos });
+      setData(userDetails || {});
+      setRepos(userRepos || []);
+    })();
   }, []);
 
-  function handleSearch() {
+  async function handleSearch() {
     document.getElementById("user-content").style.display = "block";
-    fetch(`https://api.github.com/users/${inputText}`)
-      .then((res) => res.json())
-      .then((item) => setData(item));
 
-    fetch(`https://api.github.com/users/${inputText}/repos`)
-      .then((res) => res.json())
-      .then((item) => setRepos(item));
+    const userDetails = await getAPI(
+      `https://api.github.com/users/${inputText}`
+    );
+    const userRepos = await getAPI(
+      `https://api.github.com/users/${inputText}/repos`
+    );
+    setData(userDetails || {});
+    setRepos(userRepos || []);
   }
-  // const localStorage = localStorage.getIem("data") || null
-  // localStorage.setItem("data", JSON.stringify(data));
 
-  // localStorage.setItem("repo", JSON.stringify(repos));
   return (
     <>
       <div className="firstPageDiv">

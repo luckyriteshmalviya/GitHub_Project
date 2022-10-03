@@ -1,27 +1,28 @@
 import { useEffect, useState } from "react";
+import "./RepoDetail.css";
 import { Link, useParams } from "react-router-dom";
+import { getAPI } from "../network";
 
 function RepoDetail() {
   const { userId, repoId } = useParams();
   const [repo, setRepo] = useState([]);
 
   useEffect(() => {
-    fetch(`https://api.github.com/repos/${userId}/${repoId}`)
-      .then((res) => res.json())
-      .then((item) => setRepo(item));
-  }, []);
+    (async () => {
+      const userDetails = await getAPI(
+        `https://api.github.com/repos/${userId}/${repoId}`
+      );
 
+      setRepo(userDetails || {});
+    })();
+  }, []);
   return (
     <>
-      <div
-        style={{
-          textalign: "left",
-          display: "flex",
-          gap: "2rem",
-        }}
-      >
+      <div className="repoDetail">
         <div style={{ width: "280px" }}>
-          <img width="80px" src={repo?.owner?.avatar_url} alt="image" />
+          <div className="userImage">
+            <img width="100px" src={repo?.owner?.avatar_url} />
+          </div>
           <h5>Verified by GitHub</h5>
           <p>
             Github confirms that this apps meets the requirement for minimum

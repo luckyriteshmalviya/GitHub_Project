@@ -1,15 +1,20 @@
 import { useState } from "react";
 import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
+import { getAPI } from "./network";
 
 function Followers() {
   const { userName } = useParams();
   const [list, setList] = useState([]);
 
   useEffect(() => {
-    fetch(`https://api.github.com/users/${userName}/followers`)
-      .then((item) => item.json())
-      .then((elem) => setList(elem));
+    (async () => {
+      const userDetails = await getAPI(
+        `https://api.github.com/users/${userName}/followers`
+      );
+
+      setList(userDetails || []);
+    })();
   }, []);
 
   return (

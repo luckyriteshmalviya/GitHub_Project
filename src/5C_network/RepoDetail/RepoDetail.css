@@ -1,0 +1,10 @@
+.repoDetail {
+  text-align: left;
+  display: flex;
+  gap: 2rem;
+}
+.userImage {
+  width: 100px;
+  height: 100px;
+  background-color: lightGrey;
+}
