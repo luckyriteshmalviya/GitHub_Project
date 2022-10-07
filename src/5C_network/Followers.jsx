@@ -9,13 +9,18 @@ function Followers() {
 
   useEffect(() => {
     (async () => {
+      let availableFollowers = JSON.parse(localStorage.getItem("Followers"));
+      console.log(availableFollowers[0]);
+      console.log({ userName });
+
       const userDetails = await getAPI(
         `https://api.github.com/users/${userName}/followers`
       );
-
       setList(userDetails || []);
     })();
   }, []);
+
+  // console.log("followers", list[1]);
 
   return (
     <>

@@ -5,6 +5,9 @@ import RepoDetail from "./5C_network/RepoDetail/RepoDetail";
 import Followers from "./5C_network/Followers";
 
 function App() {
+  //  const GlobalState =  React.createContext();
+  //  const UseGlobalState = GlobalState.Provider;
+
   return (
     <>
       <BrowserRouter>

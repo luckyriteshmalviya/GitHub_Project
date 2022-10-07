@@ -1,5 +1,4 @@
-import { useEffect } from "react";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import "./MainPage.css";
 import { getAPI } from "./network";
@@ -13,7 +12,6 @@ function MainPage() {
 
   const search = useLocation().search;
   const name = new URLSearchParams(search).get("q");
-
   useEffect(() => {
     (async () => {
       if (name === null) {
@@ -21,13 +19,30 @@ function MainPage() {
       }
       document.getElementById("user-content").style.display = "block";
 
-      const userDetails = await getAPI(`https://api.github.com/users/${name}`);
-      const userRepos = await getAPI(
-        `https://api.github.com/users/${name}/repos`
-      );
-      console.log({ name }, { userDetails }, { userRepos });
-      setData(userDetails || {});
-      setRepos(userRepos || []);
+      let availableData = JSON.parse(localStorage.getItem("data"));
+      let availableRepo = JSON.parse(localStorage.getItem("repo"));
+
+      for (let i = 0; i < availableData.length; i++) {
+        if (name == availableData[i].login) {
+          setData(availableData[i]);
+        } else {
+          const userDetails = await getAPI(
+            `https://api.github.com/users/${name}`
+          );
+          setData(userDetails || {});
+        }
+      }
+      for (let i = 0; i < availableRepo.length; i++) {
+        if (name == availableRepo[i][0].owner.login) {
+          console.log("inside");
+          setRepos(availableRepo[i]);
+        } else {
+          const userRepos = await getAPI(
+            `https://api.github.com/users/${name}/repos`
+          );
+          setRepos(userRepos || []);
+        }
+      }
     })();
   }, []);
 
@@ -37,9 +52,28 @@ function MainPage() {
     const userDetails = await getAPI(
       `https://api.github.com/users/${inputText}`
     );
+
     const userRepos = await getAPI(
       `https://api.github.com/users/${inputText}/repos`
     );
+
+    const userFollowers = await getAPI(
+      `https://api.github.com/users/${inputText}/followers`
+    );
+
+    let availableData = JSON.parse(localStorage.getItem("data")) || [];
+    availableData = [...availableData, userDetails];
+    localStorage.setItem("data", JSON.stringify(availableData));
+
+    let availableRepo = JSON.parse(localStorage.getItem("repo")) || [];
+    availableRepo = [...availableRepo, userRepos];
+    localStorage.setItem("repo", JSON.stringify(availableRepo));
+
+    let availableFollowers =
+      JSON.parse(localStorage.getItem("Followers")) || [];
+    availableFollowers = [...availableFollowers, userFollowers];
+    localStorage.setItem("Followers", JSON.stringify(availableFollowers));
+
     setData(userDetails || {});
     setRepos(userRepos || []);
   }
