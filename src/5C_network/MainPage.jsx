@@ -1,7 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useLocation } from "react-router-dom";
+import {
+  getUserData,
+  getUserDetailsAPI,
+  getUserFollowers,
+  getUserReposAPI,
+  saveUserData,
+} from "./gitHub";
 import "./MainPage.css";
-import { getAPI } from "./network";
 import RepoList from "./RepoList/RepoList";
 import UserDetails from "./UserDetails";
 
@@ -12,71 +18,42 @@ function MainPage() {
 
   const search = useLocation().search;
   const name = new URLSearchParams(search).get("q");
-  useEffect(() => {
-    (async () => {
-      if (name === null) {
-        return;
-      }
+
+  const handleSearch = useCallback(async (search) => {
+    // Search saved records
+    const hasUserDetails = getUserData(search);
+    if (hasUserDetails) {
       document.getElementById("user-content").style.display = "block";
 
-      let availableData = JSON.parse(localStorage.getItem("data"));
-      let availableRepo = JSON.parse(localStorage.getItem("repo"));
+      setData(hasUserDetails.details);
+      setRepos(hasUserDetails.repos);
+      return;
+    }
 
-      for (let i = 0; i < availableData.length; i++) {
-        if (name == availableData[i].login) {
-          setData(availableData[i]);
-        } else {
-          const userDetails = await getAPI(
-            `https://api.github.com/users/${name}`
-          );
-          setData(userDetails || {});
-        }
-      }
-      for (let i = 0; i < availableRepo.length; i++) {
-        if (name == availableRepo[i][0].owner.login) {
-          console.log("inside");
-          setRepos(availableRepo[i]);
-        } else {
-          const userRepos = await getAPI(
-            `https://api.github.com/users/${name}/repos`
-          );
-          setRepos(userRepos || []);
-        }
-      }
-    })();
-  }, []);
+    // Loading user details
+    const userDetails = await getUserDetailsAPI(search);
 
-  async function handleSearch() {
-    document.getElementById("user-content").style.display = "block";
-
-    const userDetails = await getAPI(
-      `https://api.github.com/users/${inputText}`
-    );
-
-    const userRepos = await getAPI(
-      `https://api.github.com/users/${inputText}/repos`
-    );
-
-    const userFollowers = await getAPI(
-      `https://api.github.com/users/${inputText}/followers`
-    );
-
-    let availableData = JSON.parse(localStorage.getItem("data")) || [];
-    availableData = [...availableData, userDetails];
-    localStorage.setItem("data", JSON.stringify(availableData));
-
-    let availableRepo = JSON.parse(localStorage.getItem("repo")) || [];
-    availableRepo = [...availableRepo, userRepos];
-    localStorage.setItem("repo", JSON.stringify(availableRepo));
-
-    let availableFollowers =
-      JSON.parse(localStorage.getItem("Followers")) || [];
-    availableFollowers = [...availableFollowers, userFollowers];
-    localStorage.setItem("Followers", JSON.stringify(availableFollowers));
+    if (!userDetails.loginId) {
+      document.getElementById("user-content").style.display = "none";
+      return alert("No User found");
+    }
 
     setData(userDetails || {});
+    document.getElementById("user-content").style.display = "block";
+
+    // Loading user repos
+    const userRepos = await getUserReposAPI(search);
     setRepos(userRepos || []);
-  }
+
+    // Loading user followers
+    const userFollowers = await getUserFollowers(search);
+    saveUserData(userDetails, userRepos, userFollowers);
+  }, []);
+
+  useEffect(() => {
+    if (!name) return;
+    handleSearch(name);
+  }, [name, handleSearch]);
 
   return (
     <>
@@ -89,7 +66,7 @@ function MainPage() {
           style={{ border: "1px solid #b7b6b6", paddingLeft: "10px" }}
           placeholder="Enter GitHub Id . . . "
         />
-        <button onClick={handleSearch}>Search</button>
+        <button onClick={() => handleSearch(inputText)}>Search</button>
       </div>
 
       <div id="user-content" style={{ display: "none" }}>

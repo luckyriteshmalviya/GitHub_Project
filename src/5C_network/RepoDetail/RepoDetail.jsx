@@ -1,21 +1,25 @@
 import { useEffect, useState } from "react";
 import "./RepoDetail.css";
 import { Link, useParams } from "react-router-dom";
-import { getAPI } from "../network";
+import { getUserData } from "../gitHub";
 
 function RepoDetail() {
   const { userId, repoId } = useParams();
   const [repo, setRepo] = useState([]);
+  const [username, setUserName] = useState("");
 
   useEffect(() => {
-    (async () => {
-      const userDetails = await getAPI(
-        `https://api.github.com/repos/${userId}/${repoId}`
-      );
+    const userDetails = getUserData(userId);
+    if (!userDetails) return;
 
-      setRepo(userDetails || {});
-    })();
-  }, []);
+    setUserName(userDetails?.details?.name);
+
+    const repoDetails = userDetails.repos.find(
+      (item) => item.name.toLowerCase() === repoId.toLowerCase()
+    );
+    setRepo(repoDetails);
+  }, [userId, repoId]);
+
   return (
     <>
       <div className="repoDetail">
@@ -40,19 +44,11 @@ function RepoDetail() {
             }}
           >
             <b>Full Name : </b>
-            {repo.full_name}
+            {username}
           </p>
           <p>
             <b>Description : </b>
             {repo.description}
-          </p>
-          <p>
-            <b>Visibility : </b>
-            {repo.visibility}
-          </p>
-          <p>
-            <b>Language : </b>
-            {repo.language}
           </p>
         </div>
       </div>

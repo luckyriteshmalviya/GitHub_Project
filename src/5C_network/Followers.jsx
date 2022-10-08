@@ -1,29 +1,44 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
-import { getAPI } from "./network";
+import {
+  getUserData,
+  getUserDetailsAPI,
+  getUserFollowers,
+  getUserReposAPI,
+  saveUserData,
+} from "./gitHub";
 
 function Followers() {
   const { userName } = useParams();
   const [list, setList] = useState([]);
 
   useEffect(() => {
-    (async () => {
-      let availableFollowers = JSON.parse(localStorage.getItem("Followers"));
-      console.log(availableFollowers[0]);
-      console.log({ userName });
+    const userDetails = getUserData(userName);
+    if (userDetails) {
+      setList(userDetails?.followers || []);
+      return;
+    }
 
-      const userDetails = await getAPI(
-        `https://api.github.com/users/${userName}/followers`
-      );
-      setList(userDetails || []);
-    })();
+    handleSearch(userName);
+  }, [userName]);
+
+  const handleSearch = useCallback(async (search) => {
+    const userFollowers = await getUserFollowers(search);
+    setList(userFollowers);
+
+    const userDetails = await getUserDetailsAPI(search);
+    const userRepos = await getUserReposAPI(search);
+    saveUserData(userDetails, userRepos, userFollowers);
   }, []);
-
-  // console.log("followers", list[1]);
 
   return (
     <>
+      <Link to={`/?q=${userName}`}>
+        <button>Go Back to Home</button>
+      </Link>
+      <br />
+      <br />
       <h3>List of Followers</h3>
       <br />
       <div
@@ -65,9 +80,6 @@ function Followers() {
           );
         })}
       </div>
-      <Link to={`/?q=${userName}`}>
-        <button>Go Back to Home</button>
-      </Link>
     </>
   );
 }
