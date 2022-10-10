@@ -15,6 +15,7 @@ function MainPage() {
   const [inputText, setInputText] = useState("");
   const [data, setData] = useState([]);
   const [repos, setRepos] = useState([]);
+  const [flag, setFlag] = useState(false);
 
   const search = useLocation().search;
   const name = new URLSearchParams(search).get("q");
@@ -23,7 +24,7 @@ function MainPage() {
     // Search saved records
     const hasUserDetails = getUserData(search);
     if (hasUserDetails) {
-      document.getElementById("user-content").style.display = "block";
+      setFlag(true);
 
       setData(hasUserDetails.details);
       setRepos(hasUserDetails.repos);
@@ -33,13 +34,13 @@ function MainPage() {
     // Loading user details
     const userDetails = await getUserDetailsAPI(search);
 
-    if (!userDetails.loginId) {
-      document.getElementById("user-content").style.display = "none";
+    if (!userDetails.login) {
+      setFlag(false);
       return alert("No User found");
     }
 
     setData(userDetails || {});
-    document.getElementById("user-content").style.display = "block";
+    setFlag(true);
 
     // Loading user repos
     const userRepos = await getUserReposAPI(search);
@@ -69,16 +70,18 @@ function MainPage() {
         <button onClick={() => handleSearch(inputText)}>Search</button>
       </div>
 
-      <div id="user-content" style={{ display: "none" }}>
-        <div>
-          <UserDetails data={data} />
+      {flag == true ? (
+        <div id="user-content">
+          <div>
+            <UserDetails data={data} />
+          </div>
+          <hr />
+          <h4 style={{ paddingLeft: "50px" }}>Repositories</h4>
+          <div className="parent-repo">
+            <RepoList repos={repos} />
+          </div>
         </div>
-        <hr />
-        <h4 style={{ paddingLeft: "50px" }}>Repositories</h4>
-        <div className="parent-repo">
-          <RepoList repos={repos} />
-        </div>
-      </div>
+      ) : null}
     </>
   );
 }

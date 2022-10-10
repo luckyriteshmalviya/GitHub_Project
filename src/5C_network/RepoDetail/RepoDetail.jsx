@@ -43,8 +43,13 @@ function RepoDetail() {
               textalign: "left",
             }}
           >
+            <br />
             <b>Full Name : </b>
             {username}
+          </p>
+          <p>
+            <b>GitHub Id : </b>
+            {userId}
           </p>
           <p>
             <b>Description : </b>

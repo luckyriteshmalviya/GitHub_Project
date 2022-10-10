@@ -6,7 +6,11 @@ function UserDetails({ data }) {
     <div className="user-detail" style={{ margin: "4rem" }}>
       <div>
         <div className="user-image">
-          <img width="130px" src={data.avatar_url} />
+          <img
+            style={{ borderRadius: "50%" }}
+            width="130px"
+            src={data.avatar_url}
+          />
         </div>
 
         <div style={{ marginTop: "5px" }}>
@@ -17,6 +21,10 @@ function UserDetails({ data }) {
         <div style={{ width: "500px" }}>{data.bio}</div>
         <div>
           <b>{data.company}</b>
+        </div>
+        <br />
+        <div>
+          <b>{data.login}</b>
         </div>
         <br />
         <Link to={`/followers/${data.login}`}>

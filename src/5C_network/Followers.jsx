@@ -62,18 +62,22 @@ function Followers() {
                   borderRadius: "6px",
                   padding: "14px",
                   display: "flex",
+                  flexDirection: "column",
                   gap: "14px",
+                  width: "400px",
+                  alignItems: "center",
                 }}
               >
                 <div>
-                  <img width="90px" src={item.avatar_url} alt="image" />
+                  <img
+                    style={{ marginTop: "10px", borderRadius: "50%" }}
+                    width="90px"
+                    src={item.avatar_url}
+                    alt="image"
+                  />
                 </div>
                 <div>
                   <h6>{item.login}</h6>
-                  <br />
-                  <p style={{ color: "blue", textDecoration: "underline" }}>
-                    {item.url}
-                  </p>
                 </div>
               </div>
             </Link>
